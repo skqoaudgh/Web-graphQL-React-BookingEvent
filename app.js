@@ -22,7 +22,7 @@ app.use('/api', graphqlHttp({
 mongoose.connect('mongodb+srv://' + process.env.MONGO_USER + ':' + process.env.MONGO_PASSWORD + '@node-rest-shop-zqnku.mongodb.net/' + process.env.MONGO_DB + '?retryWrites=true', 
 { useNewUrlParser: true})
 .then( () =>  {
-    app.listen(8000);
+    app.listen(8000); 
 })
 .catch(err=> {
     console.log(err);
