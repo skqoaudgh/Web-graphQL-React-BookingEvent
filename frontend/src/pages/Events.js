@@ -39,6 +39,11 @@ class EventsPage extends Component {
         this.setState({creating: false, selectedEvent: null});
     };
 
+    refreshEventHandler = () => {
+        this.setState({isLoading: true});
+        this.fetchEvents();
+    };
+
     fetchEvents() {
         this.setState({isLoading: true});
         const requestBody = {
@@ -229,7 +234,7 @@ class EventsPage extends Component {
                         </div>
                         <div className="form-control">
                             <label htmlFor="date">Date</label>
-                            <input type="datetime-local" id="date" ref={this.dateEl}></input>
+                            <input type="datetime-local" id="date" defaultValue={new Date().toISOString().slice(0,16)} ref={this.dateEl}></input>
                         </div>
                         <div className="form-control">
                             <label htmlFor="description">Description</label>

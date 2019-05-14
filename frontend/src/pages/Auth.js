@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 import AuthContext from '../context/auth-context';
 import Modal from '../components/Modal/Modal';
+import Backdrop from '../components/Backdrop/Backdrop';
 
 import './Auth.css';
 
@@ -105,7 +106,6 @@ class AuthPage extends Component {
             }
             else if(!this.state.isLogin && resData.data.createUser.email) {
                 this.setState({signupSuccess: true});
-                console.log('success');
             }
         })
         .catch(err => {
@@ -116,6 +116,7 @@ class AuthPage extends Component {
     render() {
         return (
             <React.Fragment>
+                {(this.state.isFail || this.state.signupSuccess) && <Backdrop />}
                 {this.state.isFail && this.state.isLogin && <Modal 
                     title='Login Fail' 
                     canConfirm
