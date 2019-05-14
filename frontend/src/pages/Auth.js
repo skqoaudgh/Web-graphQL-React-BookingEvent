@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
 
 import AuthContext from '../context/auth-context';
+import Modal from '../components/Modal/Modal';
 
 import './Auth.css';
 
 class AuthPage extends Component {
     state = {
-        isLogin: true
+        isLogin: true,
+        isFail: false,
+        signupSuccess: false
     }
 
     static contextType = AuthContext;
@@ -15,6 +18,20 @@ class AuthPage extends Component {
         super(props);
         this.emailEl = React.createRef();
         this.passwordEl = React.createRef();
+    }
+
+    modalConfirmHandler = () => {
+        this.setState({isFail: false, signupSuccess: false});
+        if(this.state.signupSuccess) {
+            this.setState({isLogin: true});
+        }
+
+        if(this.emailEl.current) {
+            this.emailEl.current.value = '';
+        }
+        if(this.passwordEl.current) {
+            this.passwordEl.current.value = '';
+        }        
     }
 
     switchModeHandelr = () => {
@@ -53,7 +70,7 @@ class AuthPage extends Component {
             requestBody = {
                 query: `
                     mutation CreateUser($email: String!, $password: String!) {
-                        createUser(userInput: email: $email, password: $password) {
+                        createUser(userInput: {email: $email, password: $password}) {
                             _id
                             email
                         }
@@ -79,37 +96,71 @@ class AuthPage extends Component {
             return res.json();
         })
         .then(resData => {
-            if(resData.data.login.token) {
+            if(this.state.isLogin && resData.data.login.token) {
                 this.context.login(
                     resData.data.login.token, 
                     resData.data.login.userId, 
                     resData.data.login.tokenExpiration
                 );
             }
+            else if(!this.state.isLogin && resData.data.createUser.email) {
+                this.setState({signupSuccess: true});
+                console.log('success');
+            }
         })
         .catch(err => {
-            this.context.loginFail();
+            this.setState({isFail: true, signupSuccess: false});
         });
     };
 
     render() {
         return (
-            <form className="auth-form" onSubmit={this.submitHandler}>
-                <div className="form-control">
-                    <label htmlFor="email">E-Mail</label>
-                    <input type="email" id="email" ref={this.emailEl} />
-                </div>
-                <div className="form-control">
-                    <label htmlFor="password">Password</label>
-                    <input type="password" id="password" ref={this.passwordEl} />
-                </div>
-                <div className="form-actions">
-                    <button type="submit">Submit</button>
-                    <button type="button" onClick={this.switchModeHandelr}>
-                        Switch to {this.state.isLogin ? 'Signup' : 'Login'}
-                    </button>
-                </div>            
-            </form>
+            <React.Fragment>
+                {this.state.isFail && this.state.isLogin && <Modal 
+                    title='Login Fail' 
+                    canConfirm
+                    confirmText='Confirm'
+                    onConfirm={this.modalConfirmHandler}
+                >
+                    <p>You entered wrong E-Mail or Password!</p>
+                </Modal>}
+
+                {this.state.isFail && !this.state.isLogin && <Modal 
+                    title='Signup Fail' 
+                    canConfirm
+                    confirmText='Confirm'
+                    onConfirm={this.modalConfirmHandler}
+                >
+                    <p>The E-Mail is already exist!</p>
+                </Modal>}
+
+                {this.state.signupSuccess && <Modal 
+                    title='Signup Success' 
+                    canConfirm
+                    confirmText='Confirm'
+                    onConfirm={this.modalConfirmHandler}
+                >
+                    <p>You can login now!</p>
+                </Modal>}
+
+                {!this.state.isFail &&
+                <form className="auth-form" onSubmit={this.submitHandler}>
+                    <div className="form-control">
+                        <label htmlFor="email">E-Mail</label>
+                        <input type="email" id="email" ref={this.emailEl} />
+                    </div>
+                    <div className="form-control">
+                        <label htmlFor="password">Password</label>
+                        <input type="password" id="password" ref={this.passwordEl} />
+                    </div>
+                    <div className="form-actions">
+                        <button type="submit">Submit</button>
+                        <button type="button" onClick={this.switchModeHandelr}>
+                            Switch to {this.state.isLogin ? 'Signup' : 'Login'}
+                        </button>
+                    </div>            
+                </form>}
+            </React.Fragment>
         );
     }
 }
