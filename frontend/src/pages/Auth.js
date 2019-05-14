@@ -88,7 +88,7 @@ class AuthPage extends Component {
             }
         })
         .catch(err => {
-            console.log(err);
+            this.context.loginFail();
         });
     };
 
