@@ -23,6 +23,21 @@ class App extends Component {
     this.setState({token: null, userId: null});
   };
 
+  componentWillMount() {
+    const savedToken = localStorage.savedToken;
+    const savedUserId = localStorage.savedUserId;
+    if(savedToken !== 'null' && savedUserId !== 'null') {
+      this.setState({token: savedToken, userId: savedUserId});
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if(prevState.token !== this.state.token && prevState.userId !== this.state.userId) {
+      localStorage.savedToken = this.state.token;
+      localStorage.savedUserId = this.state.userId;
+    }
+  }
+
   render() {
     return (
       <BrowserRouter>
