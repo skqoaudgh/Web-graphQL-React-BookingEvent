@@ -70,6 +70,7 @@ class BookingsPage extends Component {
                     cancelBooking(bookingId: $id) {
                         _id
                         title
+                        bookingCount
                     }
                 }
             `,

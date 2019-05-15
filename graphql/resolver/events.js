@@ -25,7 +25,8 @@ module.exports = {
             description: args.eventInput.description,
             price: args.eventInput.price,
             date: new Date(args.eventInput.date),
-            creator: req.userId
+            creator: req.userId,
+            bookingCount: 0
         });
         let createdEvent;
         try {
@@ -40,6 +41,28 @@ module.exports = {
             await creator.save();
 
             return createdEvent;
+        }
+        catch(err) {
+            throw err;
+        }
+    },
+
+    updateEvent: async (args, req) => {
+        if(!req.isAuth) {
+            throw new Error('Unauthenticated!');
+        }
+        const event = {
+            _id: args.updateInput._id,
+            title: args.updateInput.title,
+            description: args.updateInput.description,
+            price: args.updateInput.price,
+            date: new Date(args.updateInput.date),
+            creator: req.userId,
+            bookingCount: args.updateInput.bookingCount
+        };
+        try {
+            await Event.updateOne({_id:args.updateInput._id}, {$set: event});
+            return event;
         }
         catch(err) {
             throw err;

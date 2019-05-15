@@ -22,6 +22,11 @@ const eventSchema = new Schema({
     creator: {
         type: Schema.Types.ObjectId,
         ref: 'User'
+    },
+    bookingCount: {
+        type: Number,
+        required: true,
+        default: 0
     }
 });
 

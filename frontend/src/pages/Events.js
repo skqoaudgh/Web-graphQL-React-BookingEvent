@@ -55,6 +55,7 @@ class EventsPage extends Component {
                         description
                         date
                         price
+                        bookingCount
                         creator {
                             _id
                             email
@@ -199,8 +200,7 @@ class EventsPage extends Component {
             }
             return res.json();
         })
-        .then(resData => {
-            console.log(resData);
+        .then(resData => {            
             this.setState({selectedEvent: null});
         })
         .catch(err => {
@@ -253,6 +253,7 @@ class EventsPage extends Component {
                     <h1>{this.state.selectedEvent.title}</h1>
                     <h2>{this.state.selectedEvent.price}\ - {new Date(this.state.selectedEvent.date).toLocaleDateString()}</h2>
                     <p>{this.state.selectedEvent.description}</p>
+                    <p>{this.state.selectedEvent.bookingCount} is booking this event.</p>
                 </Modal>}
                 {this.context.token && (<div className="events-control">
                     <p>Share your own Events!</p>
