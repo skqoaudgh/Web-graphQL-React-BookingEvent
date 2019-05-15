@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 import AuthContext from '../context/auth-context';
 import Spinner from '../components/Spinner/Spinner';
+import HandleEvent from './HandleEvent';
 
 import BookingList from '../components/Bookings/BookingList/BookingList';
 import BookingsChart from '../components/Bookings/BookingsChart/BookingsChart';
@@ -70,6 +71,9 @@ class BookingsPage extends Component {
                     cancelBooking(bookingId: $id) {
                         _id
                         title
+                        description
+                        price
+                        date
                         bookingCount
                     }
                 }
@@ -99,6 +103,10 @@ class BookingsPage extends Component {
                 });
                 return { bookings: updatedBookings, isLoading: false };
             });
+
+            resData.data.cancelBooking.bookingCount --;
+            resData.data.cancelBooking.token = this.context.token;
+            HandleEvent.updateEventHandler(resData.data.cancelBooking);
         })
         .catch(err => {
             console.log(err);

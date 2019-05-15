@@ -5,6 +5,7 @@ import Backdrop from '../components/Backdrop/Backdrop';
 import EventList from '../components/Events/EventList/EventList';
 import Spinner from '../components/Spinner/Spinner';
 import AuthContext from '../context/auth-context';
+import HandleEvent from './HandleEvent';
 
 import './Events.css';
 
@@ -200,14 +201,19 @@ class EventsPage extends Component {
             }
             return res.json();
         })
-        .then(resData => {            
+        .then(resData => {
+            const eventData = this.state.selectedEvent;
+            eventData.bookingCount ++;
+            eventData.token = this.context.token;
+
+            HandleEvent.updateEventHandler(eventData);
             this.setState({selectedEvent: null});
         })
         .catch(err => {
             console.log(err);
         });
     }
-
+    
     componentWillUnmount() {
         this.isActive = false;
     }

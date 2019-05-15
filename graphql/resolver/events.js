@@ -57,7 +57,6 @@ module.exports = {
             description: args.updateInput.description,
             price: args.updateInput.price,
             date: new Date(args.updateInput.date),
-            creator: req.userId,
             bookingCount: args.updateInput.bookingCount
         };
         try {
