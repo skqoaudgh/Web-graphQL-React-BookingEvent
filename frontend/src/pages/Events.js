@@ -268,11 +268,14 @@ class EventsPage extends Component {
                 )}
                 {this.state.isLoading 
                     ? (<Spinner />)
-                    : (<EventList 
-                        events={this.state.events} 
-                        authUserId={this.context.userId}
-                        onViewDetail={this.showDetailHandler}
-                    />)
+                    : (<div  style={{textAlign: "center"}}>
+                        <EventList 
+                            events={this.state.events} 
+                            authUserId={this.context.userId}
+                            onViewDetail={this.showDetailHandler}
+                        />
+                        <button className="btn" onClick={this.refreshEventHandler}>Refresh</button>
+                    </div>)
                 }
             </React.Fragment>
         );
