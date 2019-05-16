@@ -24,6 +24,7 @@ module.exports = buildSchema(`
         email: String!
         password: String
         createdEvents: [Event!]
+        bookedEvents: [Event!]
     }
 
     type AuthData {

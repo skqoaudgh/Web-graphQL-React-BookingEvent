@@ -45,7 +45,8 @@ const user = async userId => {
         return { 
             ...user._doc, 
             _id: user.id,
-            createdEvents: () => eventLoader.loadMany(user._doc.createdEvents)
+            createdEvents: () => eventLoader.loadMany(user._doc.createdEvents),
+            bookedEvents: () => eventLoader.loadMany(user._doc.bookedEvents)
         };
     }
     catch(err) {
