@@ -10,7 +10,7 @@ const eventItem = props => (
         </div>
         <div>
             {props.userId === props.creatorId 
-                ? (<p>Your the owner of this event.</p>) 
+                ? (<button className="btn" onClick={props.onUpdate.bind(this, props.eventId)}>Update Event</button>)
                 : (<button className="btn" onClick={props.onDetail.bind(this, props.eventId)}>View Details</button>)
             }
         </div>

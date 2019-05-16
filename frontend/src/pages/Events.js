@@ -12,6 +12,7 @@ import './Events.css';
 class EventsPage extends Component {
     state = {
         creating: false,
+        updating: false,
         events: [],
         isLoading: false,
         selectedEvent: null
@@ -37,7 +38,7 @@ class EventsPage extends Component {
     }
 
     modalCancelHandler = () => {
-        this.setState({creating: false, selectedEvent: null});
+        this.setState({creating: false, updating: false, selectedEvent: null});
     };
 
     refreshEventHandler = () => {
@@ -92,6 +93,26 @@ class EventsPage extends Component {
         });
     }
 
+    modalUpdateHandler = eventId => {
+        this.setState({updating: false, selectedEvent: null});
+        const event = {
+            _id: eventId,
+            title: this.titleEl.current.value,
+            price: +this.priceEl.current.value,
+            date: this.dateEl.current.value,
+            description: this.descriptionEl.current.value,
+            bookingCount: this.state.selectedEvent.bookingCount,
+            token: this.context.token
+        }
+
+        if(event.title.trim().length === 0 || event.price <= 0 || event.date.trim().length === 0 || event.description.trim().length === 0) {
+            return;
+        }
+
+        HandleEvent.updateEventHandler(event);
+        this.refreshEventHandler();
+    }
+
     modalConfirmHandler = () => {
         this.setState({creating: false});
         const title = this.titleEl.current.value;
@@ -102,9 +123,6 @@ class EventsPage extends Component {
         if(title.trim().length === 0 || price <= 0 || date.trim().length === 0 || description.trim().length === 0) {
             return;
         }
-
-        const event = {title, price, date, description};
-        console.log(event);
 
         const requestBody = {
             query: `
@@ -169,9 +187,18 @@ class EventsPage extends Component {
         });
     };
 
+    updateDetailHandler = eventId => {
+        this.setState({updating: true});
+        this.setState(prevState => {
+            const selectedEvent = prevState.events.find(e => e._id === eventId);
+            return {selectedEvent: selectedEvent};
+        });
+    };
+
     bookEventHandler = () => {
         if(!this.context.token) {
             this.setState({selectedEvent: null});
+            return;
         }
         const requestBody = {
             query: `
@@ -219,40 +246,55 @@ class EventsPage extends Component {
     }
 
     render() {
+        const eventInput = {
+            title: null,
+            description: null,
+            price: null,
+            date: new Date().toISOString().slice(0,16)
+        };
+
+        if(this.state.updating) {
+            eventInput.title = this.state.selectedEvent.title;
+            eventInput.description = this.state.selectedEvent.description;
+            eventInput.price = this.state.selectedEvent.price;
+            eventInput.date = this.state.selectedEvent.date;
+        }
+
         return (
             <React.Fragment>
-                {(this.state.creating  || this.state.selectedEvent) && <Backdrop />}
-                {this.state.creating && <Modal title="Add Event" 
-                    canCancel 
-                    canConfirm 
-                    onCancel={this.modalCancelHandler} 
-                    onConfirm={this.modalConfirmHandler}
-                    confirmText="Confirm"
+                {(this.state.creating || this.state.updating || this.state.selectedEvent) && <Backdrop />}
+                {(this.state.creating || this.state.updating) && <Modal 
+                    title={this.state.creating ? "Add Event" : "Update Event"}
+                    canCancel
+                    canConfirm
+                    onCancel={this.modalCancelHandler}
+                    onConfirm={this.state.creating ? this.modalConfirmHandler : this.modalUpdateHandler.bind(this,this.state.selectedEvent._id)}
+                    confirmText={this.state.creating ? "Confirm" : "Update"}
                 >
                     <form>
                         <div className="form-control">
                             <label htmlFor="title">Title</label>
-                            <input type="text" id="title" ref={this.titleEl}></input>
+                            <input type="text" id="title" defaultValue={eventInput.title} ref={this.titleEl}></input>
                         </div>
                         <div className="form-control">
                             <label htmlFor="price">Price</label>
-                            <input type="number" id="price" ref={this.priceEl}></input>
+                            <input type="number" id="price" defaultValue={eventInput.price} ref={this.priceEl}></input>
                         </div>
                         <div className="form-control">
                             <label htmlFor="date">Date</label>
-                            <input type="datetime-local" id="date" defaultValue={new Date().toISOString().slice(0,16)} ref={this.dateEl}></input>
+                            <input type="datetime-local" id="date" defaultValue={new Date(eventInput.date).toISOString().slice(0,16)} ref={this.dateEl}></input>
                         </div>
                         <div className="form-control">
                             <label htmlFor="description">Description</label>
-                            <textarea id="description" rows="4" ref={this.descriptionEl}></textarea>
+                            <textarea id="description" rows="4" defaultValue={eventInput.description} ref={this.descriptionEl}></textarea>
                         </div>                                                                    
                     </form>
                 </Modal>}
-                {this.state.selectedEvent && <Modal 
+                {this.state.selectedEvent && !this.state.updating && <Modal
                     title={this.state.selectedEvent.title} 
                     canCancel 
                     canConfirm 
-                    onCancel={this.modalCancelHandler} 
+                    onCancel={this.modalCancelHandler}
                     onConfirm={this.bookEventHandler}
                     confirmText={this.context.token ? 'Book' : 'Confirm'}
                 >
@@ -273,6 +315,7 @@ class EventsPage extends Component {
                             events={this.state.events} 
                             authUserId={this.context.userId}
                             onViewDetail={this.showDetailHandler}
+                            onUpdateDetail={this.updateDetailHandler}
                         />
                         <button className="btn" onClick={this.refreshEventHandler}>Refresh</button>
                     </div>)
