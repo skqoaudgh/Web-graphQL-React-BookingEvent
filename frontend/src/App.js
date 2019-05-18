@@ -12,29 +12,32 @@ import './App.css';
 class App extends Component {
   state = {
     token: null,
-    userId: null
+    userId: null,
+    email: null
   }
 
-  login = (token, userId, tokenExpiration) => {
-    this.setState({token: token, userId: userId});
+  login = (token, userId, email, tokenExpiration) => {
+    this.setState({token: token, userId: userId, email: email});
   };
   
   logout = () => {
-    this.setState({token: null, userId: null});
+    this.setState({token: null, userId: null, email: null});
   };
 
   componentWillMount() {
     const savedToken = localStorage.savedToken;
     const savedUserId = localStorage.savedUserId;
-    if(savedToken !== 'null' && savedUserId !== 'null') {
-      this.setState({token: savedToken, userId: savedUserId});
+    const savedEmail = localStorage.savedEmail;
+    if(savedToken !== 'null' && savedUserId !== 'null' && savedEmail !== 'null') {
+      this.setState({token: savedToken, userId: savedUserId, email: savedEmail});
     }
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if(prevState.token !== this.state.token && prevState.userId !== this.state.userId) {
+    if(prevState.token !== this.state.token && prevState.userId !== this.state.userId && prevState.email !== this.state.email) {
       localStorage.savedToken = this.state.token;
       localStorage.savedUserId = this.state.userId;
+      localStorage.savedEmail = this.state.email;
     }
   }
 
@@ -46,7 +49,8 @@ class App extends Component {
             token: this.state.token, 
             userId: this.state.userId, 
             login: this.login,
-            logout: this.logout
+            logout: this.logout,
+            email: this.state.email
           }}>
           <MainNavigation />
           <main className="main-content">

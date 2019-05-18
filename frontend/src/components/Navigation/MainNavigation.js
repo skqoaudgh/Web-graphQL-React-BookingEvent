@@ -12,6 +12,7 @@ const mainNavigation = props => (
                 <header className="main-navigation">
                     <div className="main-navigation__logo">
                         <h1>The NavBar</h1>
+                        <h2>{context.email}</h2>
                     </div>
                     <div className="main-navigation__item">
                         <ul>

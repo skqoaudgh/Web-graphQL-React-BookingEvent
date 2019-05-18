@@ -12,8 +12,20 @@
     box-sizing: border-box;
 }
 
+.main-navigation__logo {
+    display: flex;
+}
+
+.main-navigation__logo h2 {
+    margin: 0;
+    padding: 1.5rem;
+    font-size: 1rem;
+    color: #dfcefc; 
+}
+
 .main-navigation__logo h1 {
     margin: 0;
+    padding: 1rem;
     font-size: 1.5rem;
     color: #dfcefc;
 }
