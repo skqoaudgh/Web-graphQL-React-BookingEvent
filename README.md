@@ -1,6 +1,5 @@
 # graphQL-React-BookingApp
 ![LockerImg](https://user-images.githubusercontent.com/10339017/58608209-827b1b00-82dd-11e9-88c7-0b47bab07c63.PNG)
-<center>See a [<a href="https://github.com/skqoaudgh/Web-graphQL-React-BookingEvent">source of this project</a>] hosted on GitHub.</center>
 
 
 ## Summary
